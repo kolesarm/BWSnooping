@@ -1,8 +1,9 @@
 * Look up critical values robust to bandwidth-snooping
 
 The =R= function =LookUpCV(ratio, kernel, onesided, level)= looks up appropriate
-critical values for constructing confidence intervals that are valid uniformly
-over a pre-specified range of bandwidth.
+critical values in the database of critical values =cvs-90000-40000-1500.RData=
+for constructing confidence intervals that are valid uniformly over a
+pre-specified range of bandwidth.
 
 - The parameter =ratio= is the ratio of maximum to minimum bandwidth that the
   researcher has tried (between 1 and 100).
@@ -22,6 +23,15 @@ over a pre-specified range of bandwidth.
   confidence interval (=FALSE= by default)
 - =level= specifies the confidence level (=0.95=) by default, other choices are
   =0.90= and =0.99=
+
+For instance, to look up appropriate 99% critical value for a regression
+discontinuity design using a triangular kernel, with ratio of maximum to minimum
+bandwidths equal to 6.2, one would run
+#+begin_src
+source('LookUpCV.R')
+LookUpCV(6.2, 'ltriangular', onesided=FALSE, level=0.99)
+#+end_src
+which returns =2.974=.
 
 See section 3.1 in Armstrong and Kolesár, 2014 "A Simple Adjustment for
 Bandwidth Snooping" for kernel definitions implementation details
