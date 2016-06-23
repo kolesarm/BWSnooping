@@ -1,0 +1,174 @@
+---
+title: "Critical values adjusted for bandwidth snooping"
+author: "Michal Kolesár"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: false
+    includes:
+      in_header: header.tex
+bibliography: library.bib
+vignette: >
+  %\VignetteIndexEntry{Critical values adjusted for bandwidth snooping}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include=FALSE, cache=FALSE}
+library("knitr")
+knitr::opts_knit$set(self.contained = FALSE)
+knitr::opts_chunk$set(tidy = TRUE, collapse=TRUE, comment = "#>",
+                      tidy.opts=list(blank=FALSE, width.cutoff=55))
+```
+
+
+# Calculation of critical values
+
+This section describes the method used to tabulate the critical values based on
+Corollary 3.1 in @ArKo15snooping.
+
+Let $k$ be a kernel (i.e.\ a non-negative function symmetric around zero that
+integrates to one) with bounded support normalized to $[-1,1]$. We want to
+compute the quantiles of
+\begin{equation}\label{eq:1}
+  \sup_{1\leq h\leq t}
+  \mathbb{H}(h)=_{d}\sup_{1/t\leq h\leq 1}\mathbb{H}(h),\qquad\text{and}\quad
+  \sup_{1\leq h\leq t}
+  |\mathbb{H}(h)|=_{d}\sup_{1/t\leq h\leq 1}|\mathbb{H}(h)|
+\end{equation}
+where $=_{d}$ means "equals in distribution", and $\mathbb{H}(h)$ is a mean-zero
+Gaussian process with covariance function
+$$ \cov(\mathbb{H}(h),\mathbb{H}(h'))=\frac{\int_{-\infty}^{\infty}
+    k(u/h)k(u/h') \, dd u}{ \sqrt{\int_{-\infty}^{\infty} k(u/h)^{2}\, \dd
+    u\cdot \int_{-\infty}^{\infty} k(u/h')^{2}\, \dd u} }
+    =\frac{\int_{0}^{\infty} k(u/h)k(u/h') \, \dd u}{ \sqrt{hh'}
+    \int_{0}^{\infty} k(u)^{2}\, \dd u}. $$
+
+Let $\{Y_{i,m}\}_{1\leq i\leq T,1\leq m\leq S}$ be independent samples from a
+standard normal distribution, where $T$ is the number of points sampled in each
+simulation draw $m$, and $S$ is the number of simulation draws. Let
+\begin{equation*}
+  \hat{\mathbb{H}}_{m}(h)=\frac{1/\sqrt{T}
+    \sum_{i=1}^{T}Y_{i,m}k\left(i/hT\right)}{\sqrt{T^{-1}
+    \sum_{i=1}^{T} k(i/hT)}}.
+\end{equation*}
+Observe that $(\hat{\mathbb{H}}_{m}(h))_{h\in (0,1]}$ is a centered
+Gaussian process with covariance function
+\begin{equation*}
+    \E[\hat{\mathbb{H}}_{m}(h)\hat{\mathbb{H}}_{m}(h')]=
+    \frac{1/T\sum_{i=1}^{T}k(i/hT)k(i/h'T)}{ \sqrt{T^{-1} \sum_{i=1}^{T}
+    k(i/hT)}\sqrt{T^{-1} \sum_{i=1}^{T} k(i/h'T)}}.
+\end{equation*}
+As $T\to\infty$, this process converges to $\left(\mathbb{H}(h)\right)_{h\in
+  (0,1]}$, since $\E[\hat{\mathbb{H}}_{m}(h)\hat{\mathbb{H}}_{m}(h')]\to
+  \cov(\mathbb{H}(h),\mathbb{H}(h'))$.
+
+We then approximate the quantiles of the two distributions in Equation
+\eqref{eq:1} by empirical quantiles based on the sample
+$\{\hat{\mathbb{H}}_{m}(h)\}_{m=1}^{S}$. The process $\hat{\mathbb{H}}_{m}(h)$
+is evaluated on the log-grid
+\begin{equation*}
+  \exp(\log(t):\text{stepsize}:\log(1)).
+\end{equation*}
+
+
+## Example: uniform kernel
+If the kernel is uniform, then $\hat{\mathbb{H}}_{n}(h)$ simplifies to
+\begin{equation*}
+  \hat{\mathbb{H}}_{m}(h)=\frac{\sum_{i=1}^{\lfloor hT\rfloor}Y_{i,m}}{\sqrt{
+    \lfloor hT\rfloor}}.
+\end{equation*}
+so that $\hat{\mathbb{H}}_{m}(h)$ is mean-zero Gaussian process with covariance
+function $\E[ \hat{\mathbb{H}}_{m}(h) \hat{\mathbb{H}}_{m}(h')]=\frac{\lfloor
+  hT\rfloor\wedge \lfloor h'T\rfloor}{\sqrt{\lfloor hT\rfloor \lfloor h'T\rfloor}}$.
+
+
+## Note: Alternative approaches
+
+An alternative used in an earlier version of the paper is to replace
+$\hat{\mathbb{H}}_{m}(h)$ with
+\begin{equation*}
+  \tilde{\mathbb{H}}_{m}(h)=\frac{1/\sqrt{T}
+    \sum_{i=1}^{T}Y_{i,m}k\left(i/hT\right)}{\sqrt{
+      h\int_{0}^{\infty} k(u)^{2}\, \dd u}}
+\end{equation*}
+This method, however, has the disadvantage what for any finite $T$, the variance
+of the process $\tilde{\mathbb{H}}_{m}(h)$ is not equal to one exactly.
+
+A third possible approach is to replace $\hat{\mathbb{H}}_{m}(h)$ with
+\begin{align*}
+  \hat{\mathbb{H}}_j(h) =\frac{\frac{1}{\sqrt{T}}
+    \sum_{i=1}^{T}Y_{i,j}k(X_i/h)}{\sqrt{\frac{1}{2A}\int k(u/h)^2\, du}}
+  =\frac{\frac{1}{\sqrt{T}} \sum_{i=1}^{T}Y_{i,j}k(X_i/h)}{\sqrt{\frac{h}{2A}\int
+      k(u)^2\, du}},
+\end{align*}
+where $\{(X_{i,j},Y_{i,j})\}_{1\le i\le T,1\le j\le S}$ be i.i.d. with $X_i$
+independent of $Y_i$ and $X_i\sim U[-A,A]$ and $Y_i\sim N(0,1)$.
+Note that $\hat{\mathbb{H}}_j(h)=0$ and
+\begin{align*}
+  \cov(\hat{\mathbb{H}}_j(h),\hat{\mathbb{H}}_j(h'))
+  &=\frac{EY_{i,j}^2k(X_i/h)k(X_i/h') }{\sqrt{\frac{1}{2A}\int k(u/h)^2\,
+      du}\sqrt{\frac{1}{2A}\int k(u/h')^2\, du}}
+  \\
+  & =\frac{Ek(X_i/h)k(X_i/h')}{\frac{1}{2A}\sqrt{\int k(u/h)^2\, du}\sqrt{\int
+      k(u/h')^2\, du}}
+  =\frac{\frac{1}{2A}\int_{x=-A}^{A} k(x/h)k(x/h')\, dx}{\frac{1}{2A}\sqrt{\int k(u/h)^2\, du}\sqrt{\int k(u/h')^2\, du}}  \\
+  & =\frac{\int_{x=-\infty}^\infty k(x/h)k(x/h')\, dx}{\sqrt{\int k(u/h)^2\,
+      du}\sqrt{\int k(u/h')^2\, du}}
+\end{align*}
+for $h\le 1$ (the last step follows since, for $h\le 1$, the integral is over
+$-Ah\le x\le Ah$ for both the last and second to last line). Thus,
+$\hat{\mathbb{H}}_j(h)$ and $\mathbb{H}(h)$ have the same covariance function
+and, for large enough $T$, have approximately the same distribution.
+
+# Looking up and computing snooping-adjusted critical values
+
+```{r}
+library("BWSnooping")
+
+## TODO
+```
+
+# Tables and graphs of critical values
+
+The tables and graphs in the paper can be reproduced using the functions
+`DFSnoopingCV` and `SnoopingTablesGraphs`. `DFSnoopingCV` computes a data frame
+of critical values, and `SnoopingTablesGraphs` reproduces tables and graphs
+reported in the paper:
+
+```{r, results="asis"}
+
+## This function DFSnoopingCV may long time to compute, the package has results
+##f stored for DFSnoopingCV(S=1000, T=1000, grid.length=500) under the data frame
+## snoopingcvs
+
+r <- SnoopingTablesGraphs(snoopingcvs)
+```
+
+## Graphs
+
+Critical values for local constant and local linear regression in the interior:
+```{r  message=FALSE, dev="tikz", out.width="0.7\\textwidth"}
+r$cv.interior
+```
+
+Critical values for local constant and local linear regression at the boundary:
+```{r  message=FALSE, dev="tikz", out.width="0.7\\textwidth"}
+r$cv.boundary
+```
+
+Coverage of unadjusted CIs for local constant and local linear regression in the
+interior:
+```{r  message=FALSE, dev="tikz", out.width="0.7\\textwidth"}
+r$cov.interior
+```
+
+Coverage of unadjusted CIs for local constant and local linear regression at the
+boundary:
+```{r  message=FALSE, dev="tikz", out.width="0.7\\textwidth"}
+r$cov.boundary
+```
+
+
+
+# References
