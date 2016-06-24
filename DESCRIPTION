@@ -17,7 +17,6 @@ Suggests:
     ggplot2,
     knitr,
     rmarkdown,
-    pander,
     directlabels,
     reshape2
 URL: https://github.com/kolesarm/BWSnooping

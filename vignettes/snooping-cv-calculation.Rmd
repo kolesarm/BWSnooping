@@ -148,77 +148,65 @@ r <- SnoopingTablesGraphs(snoopingcvs)
 
 ## Tables for two-sided critical values
 
-Boundary Nadaraya-Watson regression:
+- For Nadarya-Watson regression, boundary and interior critical values coincide
+- In the tables, "u" stands for uniform, "e" for Epanechnikov, and "t" for
+  triangular kernel, so that "0.9u" corresponds to 90\%-level critical value for
+  the uniform kernel, "0.99t" corresponds to 99\%-level critical value for
+  the triangular kernel, and so on.
+
 ```{r, results="asis"}
 t1 <- subset(r$table.twosided, boundary==TRUE & order==0)[, -c(1, 2)]
-pander::pandoc.table(t1)
-```
-Interior Nadaraya-Watson regression:
-```{r, results="asis"}
+knitr::kable(t1, row.names=FALSE, digits=2,
+    caption="Boundary Nadaraya-Watson regression")
+
 t2 <- subset(r$table.twosided, boundary==FALSE & order==0)[, -c(1, 2)]
-pander::pandoc.table(t2)
-```
+knitr::kable(t2, row.names=FALSE, digits=2,
+    caption="Interior Nadaraya-Watson regression")
 
-Boundary local linear regression:
-```{r, results="asis"}
 t3 <- subset(r$table.twosided, boundary==TRUE & order==1)[, -c(1, 2)]
-pander::pandoc.table(t3)
-```
+knitr::kable(t3, row.names=FALSE, digits=2,
+    caption="Boundary local linear regression")
 
-Interior local linear regression:
-```{r, results="asis"}
 t4 <- subset(r$table.twosided, boundary==FALSE & order==1)[, -c(1, 2)]
-pander::pandoc.table(t4)
-```
+knitr::kable(t4, row.names=FALSE, digits=2,
+    caption="Interior local linear regression")
 
-Boundary local quadratic regression:
-```{r, results="asis"}
 t5 <- subset(r$table.twosided, boundary==TRUE & order==2)[, -c(1, 2)]
-pander::pandoc.table(t5)
+knitr::kable(t5, row.names=FALSE, digits=2,
+    caption="Boundary local quadratic regression")
+
+t6 <- subset(r$table.twosided, boundary==FALSE & order==2)[, -c(1, 2)]
+knitr::kable(t6, row.names=FALSE, digits=2,
+    caption="Interior local quadratic regression")
 ```
 
-Interior local quadratic regression:
-```{r, results="asis"}
-t6 <- subset(r$table.twosided, boundary==FALSE & order==2)[, -c(1, 2)]
-pander::pandoc.table(t6)
-```
 
 ## Tables for one-sided critical values
 
-Boundary Nadaraya-Watson regression:
 ```{r, results="asis"}
 o1 <- subset(r$table.onesided, boundary==TRUE & order==0)[, -c(1, 2)]
-pander::pandoc.table(o1)
-```
+knitr::kable(o1, row.names=FALSE, digits=2,
+    caption="Boundary Nadaraya-Watson regression")
 
-Interior Nadaraya-Watson regression:
-```{r, results="asis"}
 o2 <- subset(r$table.onesided, boundary==FALSE & order==0)[, -c(1, 2)]
-pander::pandoc.table(o2)
-```
+knitr::kable(o2, row.names=FALSE, digits=2,
+    caption="Interior Nadaraya-Watson regression")
 
-Boundary local linear regression:
-```{r, results="asis"}
 o3 <- subset(r$table.onesided, boundary==TRUE & order==1)[, -c(1, 2)]
-pander::pandoc.table(o3)
-```
+knitr::kable(o3, row.names=FALSE, digits=2,
+    caption="Boundary local linear regression")
 
-Interior local linear regression:
-```{r, results="asis"}
 o4 <- subset(r$table.onesided, boundary==FALSE & order==1)[, -c(1, 2)]
-pander::pandoc.table(o4)
-```
+knitr::kable(o4, row.names=FALSE, digits=2,
+    caption="Interior local linear regression")
 
-Boundary local quadratic regression:
-```{r, results="asis"}
 o5 <- subset(r$table.onesided, boundary==TRUE & order==2)[, -c(1, 2)]
-pander::pandoc.table(o5)
-```
+knitr::kable(o5, row.names=FALSE, digits=2,
+    caption="Boundary local quadratic regression")
 
-Interior local quadratic regression:
-```{r, results="asis"}
 o6 <- subset(r$table.onesided, boundary==FALSE & order==2)[, -c(1, 2)]
-pander::pandoc.table(o6)
+knitr::kable(o6, row.names=FALSE, digits=2,
+    caption="Interior local quadratic regression")
 ```
 
 
