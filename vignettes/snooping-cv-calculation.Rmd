@@ -5,6 +5,7 @@ date: "`r Sys.Date()`"
 output:
   pdf_document:
     toc: false
+    number_sections: true
     includes:
       in_header: header.tex
 bibliography: library.bib
@@ -18,7 +19,7 @@ vignette: >
 library("knitr")
 knitr::opts_knit$set(self.contained = FALSE)
 knitr::opts_chunk$set(tidy = TRUE, collapse=TRUE, comment = "#>",
-                      tidy.opts=list(blank=FALSE, width.cutoff=55))
+                      tidy.opts=list(blank=FALSE, width.cutoff=75))
 ```
 
 
@@ -50,14 +51,14 @@ simulation draw $m$, and $S$ is the number of simulation draws. Let
 \begin{equation*}
   \hat{\mathbb{H}}_{m}(h)=\frac{1/\sqrt{T}
     \sum_{i=1}^{T}Y_{i,m}k\left(i/hT\right)}{\sqrt{T^{-1}
-    \sum_{i=1}^{T} k(i/hT)}}.
+    \sum_{i=1}^{T} k(i/hT)^2}}.
 \end{equation*}
 Observe that $(\hat{\mathbb{H}}_{m}(h))_{h\in (0,1]}$ is a centered
 Gaussian process with covariance function
 \begin{equation*}
     \E[\hat{\mathbb{H}}_{m}(h)\hat{\mathbb{H}}_{m}(h')]=
     \frac{1/T\sum_{i=1}^{T}k(i/hT)k(i/h'T)}{ \sqrt{T^{-1} \sum_{i=1}^{T}
-    k(i/hT)}\sqrt{T^{-1} \sum_{i=1}^{T} k(i/h'T)}}.
+    k(i/hT)^2}\sqrt{T^{-1} \sum_{i=1}^{T} k(i/h'T)^2}}.
 \end{equation*}
 As $T\to\infty$, this process converges to $\left(\mathbb{H}(h)\right)_{h\in
   (0,1]}$, since $\E[\hat{\mathbb{H}}_{m}(h)\hat{\mathbb{H}}_{m}(h')]\to
@@ -126,7 +127,7 @@ and, for large enough $T$, have approximately the same distribution.
 ```{r}
 library("BWSnooping")
 
-## TODO
+## [[TODO]]
 ```
 
 # Tables and graphs of critical values
@@ -136,14 +137,90 @@ The tables and graphs in the paper can be reproduced using the functions
 of critical values, and `SnoopingTablesGraphs` reproduces tables and graphs
 reported in the paper:
 
-```{r, results="asis"}
+```{r}
 
-## This function DFSnoopingCV may long time to compute, the package has results
-##f stored for DFSnoopingCV(S=1000, T=1000, grid.length=500) under the data frame
+## The function DFSnoopingCV may long time to compute, the package has results
+## stored for [[TODO]] DFSnoopingCV(S=1000, T=1000, grid.length=500) under the data frame
 ## snoopingcvs
 
 r <- SnoopingTablesGraphs(snoopingcvs)
 ```
+
+## Tables for two-sided critical values
+
+Boundary Nadaraya-Watson regression:
+```{r, results="asis"}
+t1 <- subset(r$table.twosided, boundary==TRUE & order==0)[, -c(1, 2)]
+pander::pandoc.table(t1)
+```
+Interior Nadaraya-Watson regression:
+```{r, results="asis"}
+t2 <- subset(r$table.twosided, boundary==FALSE & order==0)[, -c(1, 2)]
+pander::pandoc.table(t2)
+```
+
+Boundary local linear regression:
+```{r, results="asis"}
+t3 <- subset(r$table.twosided, boundary==TRUE & order==1)[, -c(1, 2)]
+pander::pandoc.table(t3)
+```
+
+Interior local linear regression:
+```{r, results="asis"}
+t4 <- subset(r$table.twosided, boundary==FALSE & order==1)[, -c(1, 2)]
+pander::pandoc.table(t4)
+```
+
+Boundary local quadratic regression:
+```{r, results="asis"}
+t5 <- subset(r$table.twosided, boundary==TRUE & order==2)[, -c(1, 2)]
+pander::pandoc.table(t5)
+```
+
+Interior local quadratic regression:
+```{r, results="asis"}
+t6 <- subset(r$table.twosided, boundary==FALSE & order==2)[, -c(1, 2)]
+pander::pandoc.table(t6)
+```
+
+## Tables for one-sided critical values
+
+Boundary Nadaraya-Watson regression:
+```{r, results="asis"}
+o1 <- subset(r$table.onesided, boundary==TRUE & order==0)[, -c(1, 2)]
+pander::pandoc.table(o1)
+```
+
+Interior Nadaraya-Watson regression:
+```{r, results="asis"}
+o2 <- subset(r$table.onesided, boundary==FALSE & order==0)[, -c(1, 2)]
+pander::pandoc.table(o2)
+```
+
+Boundary local linear regression:
+```{r, results="asis"}
+o3 <- subset(r$table.onesided, boundary==TRUE & order==1)[, -c(1, 2)]
+pander::pandoc.table(o3)
+```
+
+Interior local linear regression:
+```{r, results="asis"}
+o4 <- subset(r$table.onesided, boundary==FALSE & order==1)[, -c(1, 2)]
+pander::pandoc.table(o4)
+```
+
+Boundary local quadratic regression:
+```{r, results="asis"}
+o5 <- subset(r$table.onesided, boundary==TRUE & order==2)[, -c(1, 2)]
+pander::pandoc.table(o5)
+```
+
+Interior local quadratic regression:
+```{r, results="asis"}
+o6 <- subset(r$table.onesided, boundary==FALSE & order==2)[, -c(1, 2)]
+pander::pandoc.table(o6)
+```
+
 
 ## Graphs
 

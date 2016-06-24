@@ -4,11 +4,7 @@
 \name{snoopingcvs}
 \alias{snoopingcvs}
 \title{Snooping-adjusted critical values}
-\format{Data frame of precomputed snooping-adjusted critical values, using
-    the function \code{\link{DFSnoopingCV}}. The data frame is used by
-    \code{\link{SnoopingCV}} to look up the appropriate critical value
-
-There are TODO rows and 9 columns:
+\format{There are TODO rows and 9 columns:
 \describe{
   \item{kernel}{kernel function}
   \item{order}{Order of local polynomial (0 for local constant)}
@@ -21,13 +17,16 @@ There are TODO rows and 9 columns:
   \item{ua.onesided}{Coverage of unadjusted two-sided CIs}
 }}
 \source{
-Computed by running \code{DFSnoopingCV(S=1000, T=100, 500)}
+Computed by running [[TODO: final code]]
+\code{snoopingcvs <- DFSnoopingCV(S=1000, T=100, 500)}
 }
 \usage{
 snoopingcvs
 }
 \description{
-Snooping-adjusted critical values
+Data frame of precomputed snooping-adjusted critical values, using the
+function \code{\link{DFSnoopingCV}}. The data frame is used by
+\code{\link{SnoopingCV}} to look up the appropriate critical value
 }
 \keyword{datasets}
 

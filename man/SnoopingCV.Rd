@@ -4,39 +4,52 @@
 \alias{SnoopingCV}
 \title{Snooping-adjusted critical value}
 \usage{
-SnoopingCV(ratio, kernel, order, onesided = FALSE, coverage = FALSE,
-  level = 0.95)
+SnoopingCV(bwratio, kernel, boundary, order, onesided = FALSE,
+  coverage = FALSE, alpha = 0.95, S = 10000, T = 1000)
 }
 \arguments{
-\item{ratio}{ratio of maximum to minimum bandwidth, number between 1 and 100}
+\item{bwratio}{ratio of maximum to minimum bandwidth, number greater than 1}
 
-\item{kernel}{TODO uniform, triangular, and epanechnikov, luniform, quniform
-for local constant (Nadaraya-Watson), local linear or local quadratic}
+\item{kernel}{Either one of \code{"uniform"}, \code{"triangular"}, or
+\code{"epanechnikov"}, or else an (equivalent) kernel function}
 
-\item{order}{TODO}
+\item{boundary, order}{Logical specifying whether regression is in the
+interior or on the boundary, and an integer specifying order of local
+polynomial. If \code{kernel} is \code{"uniform"}, \code{"triangular"}, or
+\code{"epanechnikov"}, the appropriate boundary or interior equivalent
+kernel is used. If \code{kernel} is a function, these options are
+ignored.}
 
 \item{onesided}{Logical specifying whether the critical value corresponds to
-a one-sided confidence interval (\code{FALSE} by default)}
+a one-sided confidence interval.}
 
-\item{coverage}{report coverage of unadjusted CIs instead?}
+\item{coverage}{Return coverage of unadjusted CIs instead of a critical
+value?}
 
-\item{level}{number specifying confidence level, \code{0.95} by default,
-other choices are \code{0.9} and \code{0.99}.
+\item{alpha}{number specifying confidence level, \code{0.05} by default.}
 
-The function looks up appropriate critical value form a table of pre-computed
-values.}
+\item{S}{number of draws of the Gaussian process \eqn{\hat{\mathbb{H}}(h)}}
+
+\item{T}{number of draws from a normal distribution in each draw of the
+Gaussian process}
 }
 \value{
 critical value
 }
 \description{
-Look up appropriate adjusted critical value or coverage of an unadjusted
-confidence band
+Look up appropriate snooping-adjusted critical value or coverage of an
+unadjusted confidence band in a table of pre-computed critical values. If no
+pre-computed value is found, calculate appropriate critical value by Monte
+Carlo simulation.
 }
 \examples{
 ## look up appropriate 99\% critical value for a regression
-## discontinuity design using a triangular kernel, with ratio of maximum to
-## minimum bandwidths equal to 6.2
-SnoopingCV(6.2, 'ltriangular', onesided=FALSE, level=0.99)
+## discontinuity design using a triangular kernel and local linear regression,
+## with ratio of maximum to minimum bandwidths equal to 6.2
+SnoopingCV(6.2, "triangular", boundary=TRUE, order=1, alpha=0.01)
+## Values greater than 100 one will need to be computed:
+SnoopingCV(110, "triangular", boundary=TRUE, order=1, alpha=0.01)
+## Equivalently, specify equivalent kernel explicitly
+SnoopingCV(110, function(u) 6*(1 - 2*u) * (1 - u) * (u<=1), alpha=0.01)
 }
 

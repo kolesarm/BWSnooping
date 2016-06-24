@@ -1,4 +1,4 @@
-#' Snooping-robust critical values for bandwidth ratios on a grid.
+#' Snooping-adjusted critical values for bandwidth ratios on a grid.
 #'
 #' Calculate one- and two-sided critical values \eqn{c_{1-\alpha}(t;k)} for
 #' values of \eqn{t} in \code{1/grid} based on evaluating the Gaussian process
@@ -26,7 +26,8 @@ GridSnoopingCV <- function(S, T, grid, kernel, alpha=c(0.1, 0.05, 0.01)) {
 
     for (m in 1:S) {
         ## In case all k(i/hT) evaluate to zero, set sum to 1e-10
-        Hhat <- colSums(stats::rnorm(T)*ku)/ sqrt(pmax(colSums(ku), 1e-10))
+        Y <- stats::rnorm(T)
+        Hhat <- colSums(Y*ku)/ sqrt(pmax(colSums(ku^2), 1e-10))
         sup.H[m, ] <- cummax(Hhat)
         sup.absH[m, ] <- cummax(abs(Hhat))
     }
@@ -48,54 +49,18 @@ GridSnoopingCV <- function(S, T, grid, kernel, alpha=c(0.1, 0.05, 0.01)) {
 }
 
 
-#' Definitions of equivalent kernels, same as in RDHonest package
-#' @keywords internal
-EqKern <- function(kernel = "uniform", boundary = TRUE, order = 0) {
-    ## support
-    su <- function(u) (u <= 1) * (u >= -1 + boundary)
-    if (order == 0 && boundary == TRUE) {
-        switch(kernel,
-               uniform = function(u) su(u),
-               triangular = function(u) 2 * (1 - u) * su(u),
-               epanechnikov = function(u) (3 / 2) * (1 - u^2) * su(u))
-    } else if (order == 1 && boundary == TRUE) {
-        switch(kernel,
-               uniform = function(u) (4 - 6*u) * su(u),
-               triangular = function(u) 6*(1 - 2*u) * (1 - u) * su(u),
-               epanechnikov = function(u) 6/19 * (16-30*u) * (1-u^2) * su(u))
-    } else if (order == 2 && boundary == TRUE) {
-        switch(kernel,
-               uniform = function(u) (9 - 36*u + 30*u^2) * su(u),
-               triangular = function(u) 12 * (1-5*u+5*u^2) * (1-u) * su(u),
-               epanechnikov = function(u) 1/8 * (85 - 400*u + 385*u^2) *
-                   (1-u^2) * su(u))
-    } else if (order == 0 && boundary == FALSE) {
-        switch(kernel,
-               uniform = function(u) su(u) / 2,
-               triangular = function(u) (1 - abs(u)) * su(u),
-               epanechnikov = function(u) (3 / 4) * (1 - u^2) * su(u))
-    } else if (order == 1 && boundary == FALSE) {
-        switch(kernel,
-               uniform = function(u) su(u) / 2,
-               triangular = function(u) (1 - abs(u)) * su(u),
-               epanechnikov = function(u) 3/4 * (1 - u^2) * su(u))
-    } else if (order == 2 && boundary == FALSE) {
-        switch(kernel,
-               uniform = function(u) (9 - 15 * u^2) / 8 * su(u),
-               triangular = function(u) 6/7 * (2-5*u^2) * (1-abs(u)) * su(u),
-               epanechnikov = function(u) 15/32 * (3-7*u^2) * (1-u^2) * su(u))
-    }
-}
-
-
-#' Calculate snooping-robust critical values for common kernels
+#' Data frame of snooping-adjusted critical values for common kernels
 #'
-#' Calaculates a data frame of snooping-robust critical values for uniform,
-#' triangular and epanechnikov kernels and local constant, local, and quadratic
-#' regression in the interior and on the boundary.
+#' Calculates a data frame of snooping-adjusted critical values for uniform,
+#' triangular, and epanechnikov kernels and local constant, linear, and
+#' quadratic regression in the interior and on the boundary. Also calculates
+#' coverage of confidence intervals without snooping adjustment.
 #' @param grid.length length of grid on which to evaluate the Gaussian process
-#'     \eqn{\hat{\mathbb{H}}(h)}
+#'     \eqn{\hat{\mathbb{H}}(h)}. Critical values are computed for ratios of
+#'     maximum to minumum bandwidth equal to each value in the grid.
 #' @inheritParams GridSnoopingCV
+#' @return data frame in the same format as the \code{\link{snoopingcvs}} data
+#'     frame, which was generated using this funcion.
 #' @export
 DFSnoopingCV <- function(S, T, grid.length) {
 
@@ -107,8 +72,8 @@ DFSnoopingCV <- function(S, T, grid.length) {
 
     cvs <- data.frame()
     for (j in seq_len(nrow(d))) {
-        k <- function(u) EqKern(kernel=d$kernel[j],
-                                boundary=d$boundary[j], order=d$order[j])(u)
+        k <- EqKern(kernel=d$kernel[j],
+                    boundary=d$boundary[j], order=d$order[j])
         cvs <- rbind(cvs, data.frame(kernel=d$kernel[j], boundary=d$boundary[j],
                                      order=d$order[j],
                                      GridSnoopingCV(S, T, grid, k)))
@@ -118,67 +83,37 @@ DFSnoopingCV <- function(S, T, grid.length) {
 }
 
 
-#' Plotting critical values
-#' @keywords internal
-baseplot <- function(data, ylab, xlim=NULL, method=NULL) {
-    p <- ggplot2::qplot(x=t, y=y, data=data, geom="line",
-                        color=what, linetype=what) +
-        ggplot2::xlab("$h_{\\max}/h_{\\min}$") + ggplot2::ylab(ylab) +
-        ggplot2::theme_classic() +
-        ggplot2::theme(legend.position = "none",
-                       strip.background=ggplot2::element_rect(color = "white",
-                           linetype=NULL),
-                       axis.line.x=ggplot2::element_line(color="black",
-                           size=0.2, linetype="solid"),
-                       axis.line.y=ggplot2::element_line(color="black",
-                           size=0.2, linetype="solid"))
-
-    if(!is.null(xlim))
-        p <- p + ggplot2::coord_cartesian(xlim = xlim)
-
-    if (!is.null(method))
-        p <-  p + directlabels::geom_dl(ggplot2::aes(label=what),
-                                        data=data, method=method)
-
-}
-
-
-
 #' Tables and graphs of snooping-robust critical values
 #'
-#' Print tables of snooping-adjusted critical values and return ggplot2 object
-#' for plotting them
+#' Generate tables of snooping-adjusted critical values as well as ggplot2
+#' objects that plot them
 #' @param cvs Data frame returned by \code{\link{DFSnoopingCV}}
 #' @param bwr.print values of bandwidth ratios to print in summary tables
 #' @param maxratio maximum ratio of maximum to minimum bandwidth to plot
+#' @param orders vector of orders of local polynomial to plot
+#' @return A list with two components: a list of tables and a list of figures
 #' @export
 SnoopingTablesGraphs <- function(cvs, maxratio=10,
+                                 orders=0:2,
     bwr.print=c(seq(1, 2, by=0.2), 3:10, 20, 50, 99.9)) {
 
     ## boundary, order; one and two-sided
     t.print <- cvs$t[sapply(bwr.print, function(h) which.max(cvs$t>=h))]
 
-    PrintTable <- function(bd, order) {
-        subs <- cvs[cvs$boundary==bd & cvs$order==order & cvs$t %in% t.print,
-                    -c(2, 3, 8, 9)]
-        one <- reshape2::dcast(subs, t~kernel+level, value.var="onesided")
-        two <- reshape2::dcast(subs, t~kernel+level, value.var="twosided")
-        names(one)[-1] <- names(two)[-1] <-
-            as.vector(outer(unique(cvs$level), c("u", "t", "e"), paste0))
-
-        cat("\nBoundary:", bd, "Order: ", order, "\nOnesided:\n")
-        pander::pandoc.table(one, digits=3, style="simple")
-        cat("Twosided\n")
-        pander::pandoc.table(two, digits=3, style="simple")
-    }
-
-    d <- expand.grid(bd=c(TRUE, FALSE), order=0:2, stringsAsFactors=FALSE)
-    for (j in seq_len(nrow(d))) PrintTable(d$bd[j], d$order[j])
+    subs <- cvs[cvs$t %in% t.print, ]
+    one <- reshape2::dcast(subs, boundary+order+t~kernel+level,
+                           value.var="onesided")
+    two <- reshape2::dcast(subs, boundary+order+t~kernel+level,
+                           value.var="twosided")
+    names(one)[-c(1:3)] <- names(two)[-c(1:3)] <-
+        as.vector(outer(unique(cvs$level), c("u", "t", "e"), paste0))
 
     ## plot 95\% CVs
     cvs$what <- as.vector(cvs$kernel)
     cvs$what[cvs$order==1] <- paste0(cvs$kernel[cvs$order==1], " (ll)")
-    subs <- cvs[cvs$order<2 & cvs$level==0.95 & cvs$t<=maxratio, -c(1, 3, 5)]
+    cvs$what[cvs$order==2] <- paste0(cvs$kernel[cvs$order==2], " (lq)")
+    subs <- cvs[cvs$order %in% orders & cvs$level==0.95 &
+                    cvs$t<=maxratio, -c(1, 3, 5)]
 
     subs$y <- subs$twosided
     pit <- baseplot(data=subset(subs, boundary==FALSE), ylab="Critical value",
@@ -191,49 +126,76 @@ SnoopingTablesGraphs <- function(cvs, maxratio=10,
     pbc <- baseplot(data=subset(subs, boundary==TRUE), ylab="Critical value",
                     xlim=c(1, maxratio+2), method="last.qp")
 
-    list(cv.interior=pit, cv.boundary=pbt, cov.interior=pic, cov.boundary=pbc)
+    list(cv.interior=pit, cv.boundary=pbt, cov.interior=pic, cov.boundary=pbc,
+         table.onesided=one, table.twosided=two)
 }
 
 
-################################################################
-
 #' Snooping-adjusted critical value
 #'
-#' Look up appropriate adjusted critical value or coverage of an unadjusted
-#' confidence band
-#' @param ratio ratio of maximum to minimum bandwidth, number between 1 and 100
-#' @param kernel TODO uniform, triangular, and epanechnikov, luniform, quniform
-#' for local constant (Nadaraya-Watson), local linear or local quadratic
-#' @param order TODO
+#' Look up appropriate snooping-adjusted critical value or coverage of an
+#' unadjusted confidence band in a table of pre-computed critical values. If no
+#' pre-computed value is found, calculate appropriate critical value by Monte
+#' Carlo simulation.
+#' @param bwratio ratio of maximum to minimum bandwidth, number greater than 1
+#' @param kernel Either one of \code{"uniform"}, \code{"triangular"}, or
+#'     \code{"epanechnikov"}, or else an (equivalent) kernel function
+#' @param boundary,order Logical specifying whether regression is in the
+#'     interior or on the boundary, and an integer specifying order of local
+#'     polynomial. If \code{kernel} is \code{"uniform"}, \code{"triangular"}, or
+#'     \code{"epanechnikov"}, the appropriate boundary or interior equivalent
+#'     kernel is used. If \code{kernel} is a function, these options are
+#'     ignored.
 #' @param onesided Logical specifying whether the critical value corresponds to
-#' a one-sided confidence interval (\code{FALSE} by default)
-#' @param coverage report coverage of unadjusted CIs instead?
-#' @param level number specifying confidence level, \code{0.95} by default,
-#' other choices are \code{0.9} and \code{0.99}.
-#'
-#' The function looks up appropriate critical value form a table of pre-computed
-#' values.
+#'     a one-sided confidence interval.
+#' @param coverage Return coverage of unadjusted CIs instead of a critical
+#'     value?
+#' @param alpha number specifying confidence level, \code{0.05} by default.
+#' @inheritParams GridSnoopingCV
 #' @examples
 #' ## look up appropriate 99% critical value for a regression
-#' ## discontinuity design using a triangular kernel, with ratio of maximum to
-#' ## minimum bandwidths equal to 6.2
-#' SnoopingCV(6.2, 'ltriangular', onesided=FALSE, level=0.99)
+#' ## discontinuity design using a triangular kernel and local linear regression,
+#' ## with ratio of maximum to minimum bandwidths equal to 6.2
+#' SnoopingCV(6.2, "triangular", boundary=TRUE, order=1, alpha=0.01)
+#' ## Values greater than 100 one will need to be computed:
+#' SnoopingCV(110, "triangular", boundary=TRUE, order=1, alpha=0.01)
+#' ## Equivalently, specify equivalent kernel explicitly
+#' SnoopingCV(110, function(u) 6*(1 - 2*u) * (1 - u) * (u<=1), alpha=0.01)
 #' @return critical value
 #' @export
-SnoopingCV <- function(ratio, kernel, order, onesided=FALSE,
-                     coverage=FALSE, level=0.95) {
+SnoopingCV <- function(bwratio, kernel, boundary, order, onesided=FALSE,
+                       coverage=FALSE, alpha=0.95, S=10000, T=1000) {
 
-    cv <- cvs[which.max(cvs$h>= ratio & cvs$level==level &
-                        cvs$kernel==kernel), ]
-    if(abs(cv$h-ratio > 0.1))
-              warning("Cannot look up cv adjustment precisely")
-    if(coverage & onesided) {
-        cv$c.onesided
-    } else if (coverage) {
-        cv$c.twosided
-    } else if (onesided) {
-        cv$onesided
+    sub <- data.frame()
+    if (is.character(kernel)) {
+        sub <- snoopingcvs[snoopingcvs$t>=bwratio &
+                           snoopingcvs$t<=(bwratio+0.1) &
+                           snoopingcvs$level==(1-alpha) &
+                           snoopingcvs$boundary==boundary &
+                           snoopingcvs$kernel==kernel &
+                           snoopingcvs$order==order, ]
+    }
+
+    if (nrow(sub)>=1) {
+        sub <- subset(sub, t==min(sub$t))
     } else {
-        cv$twosided
+        ## Either we're not close enough, or else kernel not a function
+        if (is.character(kernel))
+            kernel <- EqKern(kernel, boundary, order)
+
+        message("Computing critical value by Monte Carlo simulation")
+        grid <- exp(seq(log(1), log(1/bwratio), length.out=100))
+        sub <- GridSnoopingCV(S=S, T=T, grid, kernel,
+                              alpha=alpha)[length(grid), ]
+    }
+
+    if(coverage & onesided) {
+        sub$ua.onesided
+    } else if (coverage) {
+        sub$ua.twosided
+    } else if (onesided) {
+        sub$onesided
+    } else {
+        sub$twosided
     }
 }

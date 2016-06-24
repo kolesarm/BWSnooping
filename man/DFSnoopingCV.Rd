@@ -2,7 +2,7 @@
 % Please edit documentation in R/cv_calc.R
 \name{DFSnoopingCV}
 \alias{DFSnoopingCV}
-\title{Calculate snooping-robust critical values for common kernels}
+\title{Data frame of snooping-adjusted critical values for common kernels}
 \usage{
 DFSnoopingCV(S, T, grid.length)
 }
@@ -13,11 +13,17 @@ DFSnoopingCV(S, T, grid.length)
 Gaussian process}
 
 \item{grid.length}{length of grid on which to evaluate the Gaussian process
-\eqn{\hat{\mathbb{H}}(h)}}
+\eqn{\hat{\mathbb{H}}(h)}. Critical values are computed for ratios of
+maximum to minumum bandwidth equal to each value in the grid.}
+}
+\value{
+data frame in the same format as the \code{\link{snoopingcvs}} data
+    frame, which was generated using this funcion.
 }
 \description{
-Calaculates a data frame of snooping-robust critical values for uniform,
-triangular and epanechnikov kernels and local constant, local, and quadratic
-regression in the interior and on the boundary.
+Calculates a data frame of snooping-adjusted critical values for uniform,
+triangular, and epanechnikov kernels and local constant, linear, and
+quadratic regression in the interior and on the boundary. Also calculates
+coverage of confidence intervals without snooping adjustment.
 }
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/cv_calc.R
 \name{GridSnoopingCV}
 \alias{GridSnoopingCV}
-\title{Snooping-robust critical values for bandwidth ratios on a grid.}
+\title{Snooping-adjusted critical values for bandwidth ratios on a grid.}
 \usage{
 GridSnoopingCV(S, T, grid, kernel, alpha = c(0.1, 0.05, 0.01))
 }

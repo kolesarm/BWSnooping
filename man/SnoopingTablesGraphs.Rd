@@ -4,18 +4,23 @@
 \alias{SnoopingTablesGraphs}
 \title{Tables and graphs of snooping-robust critical values}
 \usage{
-SnoopingTablesGraphs(cvs, maxratio = 10, bwr.print = c(seq(1, 2, by = 0.2),
-  3:10, 20, 50, 99.9))
+SnoopingTablesGraphs(cvs, maxratio = 10, orders = 0:2,
+  bwr.print = c(seq(1, 2, by = 0.2), 3:10, 20, 50, 99.9))
 }
 \arguments{
 \item{cvs}{Data frame returned by \code{\link{DFSnoopingCV}}}
 
 \item{maxratio}{maximum ratio of maximum to minimum bandwidth to plot}
 
+\item{orders}{vector of orders of local polynomial to plot}
+
 \item{bwr.print}{values of bandwidth ratios to print in summary tables}
 }
+\value{
+A list with two components: a list of tables and a list of figures
+}
 \description{
-Print tables of snooping-adjusted critical values and return ggplot2 object
-for plotting them
+Generate tables of snooping-adjusted critical values as well as ggplot2
+objects that plot them
 }
 
