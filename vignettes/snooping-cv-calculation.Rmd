@@ -40,7 +40,7 @@ compute the quantiles of
 where $=_{d}$ means "equals in distribution", and $\mathbb{H}(h)$ is a mean-zero
 Gaussian process with covariance function
 $$ \cov(\mathbb{H}(h),\mathbb{H}(h'))=\frac{\int_{-\infty}^{\infty}
-    k(u/h)k(u/h') \, dd u}{ \sqrt{\int_{-\infty}^{\infty} k(u/h)^{2}\, \dd
+    k(u/h)k(u/h') \, \dd u}{ \sqrt{\int_{-\infty}^{\infty} k(u/h)^{2}\, \dd
     u\cdot \int_{-\infty}^{\infty} k(u/h')^{2}\, \dd u} }
     =\frac{\int_{0}^{\infty} k(u/h)k(u/h') \, \dd u}{ \sqrt{hh'}
     \int_{0}^{\infty} k(u)^{2}\, \dd u}. $$

@@ -17,9 +17,10 @@ SnoopingCVNearBd <- function(S, T, bwratios, kernel, order, db, ngr,
                              alpha=c(0.1, 0.05, 0.01)) {
 
     set.seed(7)
-    k <- function(u, t) {
+    ## equivalent kernel
+    ek <- function(u, c0) {
         M <- sapply(0:(2*order), function(j)
-            integrate(function(u) u^j * kernel(u), -t, 1)$value)
+            integrate(function(u) u^j * kernel(u), -c0, 1)$value)
         ## Transform to a matrix
         M <- sapply(0:order, function(j) M[(j+1):(order+j+1)])
 
@@ -28,20 +29,22 @@ SnoopingCVNearBd <- function(S, T, bwratios, kernel, order, db, ngr,
 
     ## Values of kernel for a given bandwidth ratio t
     ku <- function(t) {
-        ## grid points at whcih to evaluate Gaussian process
+        ## grid points at which to evaluate Gaussian process
         ss <- 1/exp(seq(log(1), log(t), length.out=ngr))
         ## ku[i, s]
-        sapply(ss, function(s) k(((db+1)*(1:T)/T - db) / (t*s), db/(t*s)) )
+        sapply(ss, function(s) ek(((db+1)*(1:T)/T - db) / (t*s), db/(t*s)) )
     }
+    ## Precompute them for the bw ratios we look at
+    kut <- lapply(bwratios, ku)
 
     sup.H <- sup.absH <- matrix(nrow=S, ncol=length(bwratios))
     for (m in 1:S) {
         ## In case all k(i/hT) evaluate to zero, set sum to 1e-10
         Y <- stats::rnorm(T)
-        That <- function(t) colSums(Y*ku(t)) /
-                                pmax(sqrt(colSums(ku(t)^2)), 1e-10)
+        That <- function(j) colSums(Y*kut[[j]]) /
+                                pmax(sqrt(colSums(kut[[j]]^2)), 1e-10)
         sups <- function(Ts) c(max(Ts), max(abs(Ts)))
-        maxs <- sapply(bwratios, function(t) sups(That(t)))
+        maxs <- sapply(seq_len(length(bwratios)), function(j) sups(That(j)))
         sup.H[m, ] <- maxs[1, ]
         sup.absH[m, ] <- maxs[2, ]
     }
@@ -85,10 +88,10 @@ SnoopingCVNearBd <- function(S, T, bwratios, kernel, order, db, ngr,
 TableSnoopingCVNearBd <- function(S, T, ngr, bwratios, db, kernel="triangular",
                                   order=1, alpha=0.05) {
 
+    ## get original kernel
     if (is.character(kernel)) kernel <- EqKern(kernel, FALSE, 0)
 
     df <- data.frame()
-
     for (dist in db) {
         r <- SnoopingCVNearBd(S, T, bwratios, kernel, order, dist, ngr, alpha=alpha)
         df <- rbind(df, data.frame(c=dist, r[, c(1, 4)]))
