@@ -33,9 +33,9 @@ integrates to one) with bounded support normalized to $[-1,1]$. We want to
 compute the quantiles of
 \begin{equation}\label{eq:1}
   \sup_{1\leq h\leq t}
-  \mathbb{H}(h)=_{d}\sup_{1/t\leq h\leq 1}\mathbb{H}(h),\qquad\text{and}\quad
+  \mathbb{H}(h)=_{d}\sup_{1/t\leq s\leq 1}\mathbb{H}(s),\qquad\text{and}\quad
   \sup_{1\leq h\leq t}
-  |\mathbb{H}(h)|=_{d}\sup_{1/t\leq h\leq 1}|\mathbb{H}(h)|
+  |\mathbb{H}(h)|=_{d}\sup_{1/t\leq s\leq 1}|\mathbb{H}(s)|
 \end{equation}
 where $=_{d}$ means "equals in distribution", and $\mathbb{H}(h)$ is a mean-zero
 Gaussian process with covariance function
@@ -45,27 +45,27 @@ $$ \cov(\mathbb{H}(h),\mathbb{H}(h'))=\frac{\int_{-\infty}^{\infty}
     =\frac{\int_{0}^{\infty} k(u/h)k(u/h') \, \dd u}{ \sqrt{hh'}
     \int_{0}^{\infty} k(u)^{2}\, \dd u}. $$
 
-Let $\{Y_{i,m}\}_{1\leq i\leq T,1\leq m\leq S}$ be independent samples from a
+Let $\{Y_{i}\}_{1\leq i\leq T}$ be independent samples from a
 standard normal distribution, where $T$ is the number of points sampled in each
-simulation draw $m$, and $S$ is the number of simulation draws. Let
+simulation draw. Let
 \begin{equation*}
-  \hat{\mathbb{H}}_{m}(h)=\frac{1/\sqrt{T}
-    \sum_{i=1}^{T}Y_{i,m}k\left(i/hT\right)}{\sqrt{T^{-1}
-    \sum_{i=1}^{T} k(i/hT)^2}}.
+  \hat{\mathbb{H}}(s)=\frac{1/\sqrt{T}
+    \sum_{i=1}^{T}Y_{i}k\left(i/sT\right)}{\sqrt{T^{-1}
+    \sum_{i=1}^{T} k(i/sT)^2}}.
 \end{equation*}
-Observe that $(\hat{\mathbb{H}}_{m}(h))_{h\in (0,1]}$ is a centered
+Observe that $(\hat{\mathbb{H}}(s))_{s\in (0,1]}$ is a centered
 Gaussian process with covariance function
 \begin{equation*}
-    \E[\hat{\mathbb{H}}_{m}(h)\hat{\mathbb{H}}_{m}(h')]=
-    \frac{1/T\sum_{i=1}^{T}k(i/hT)k(i/h'T)}{ \sqrt{T^{-1} \sum_{i=1}^{T}
-    k(i/hT)^2}\sqrt{T^{-1} \sum_{i=1}^{T} k(i/h'T)^2}}.
+    \E[\hat{\mathbb{H}}(s)\hat{\mathbb{H}}(s')]=
+    \frac{1/T\sum_{i=1}^{T}k(i/sT)k(i/s'T)}{ \sqrt{T^{-1} \sum_{i=1}^{T}
+    k(i/sT)^2}\sqrt{T^{-1} \sum_{i=1}^{T} k(i/s'T)^2}}.
 \end{equation*}
-As $T\to\infty$, this process converges to $\left(\mathbb{H}(h)\right)_{h\in
-  (0,1]}$, since $\E[\hat{\mathbb{H}}_{m}(h)\hat{\mathbb{H}}_{m}(h')]\to
-  \cov(\mathbb{H}(h),\mathbb{H}(h'))$.
+As $T\to\infty$, this process converges to $\left(\mathbb{H}(s)\right)_{s\in
+  (0,1]}$, since $\E[\hat{\mathbb{H}}(s)\hat{\mathbb{H}}(s')]\to
+  \cov(\mathbb{H}(s),\mathbb{H}(s'))$.
 
 We then approximate the quantiles of the two distributions in Equation
-\eqref{eq:1} by empirical quantiles based on the sample
+\eqref{eq:1} by empirical quantiles based on $S$ simulation draws
 $\{\hat{\mathbb{H}}_{m}(h)\}_{m=1}^{S}$. The process $\hat{\mathbb{H}}_{m}(h)$
 is evaluated on the log-grid
 \begin{equation*}
@@ -74,52 +74,52 @@ is evaluated on the log-grid
 
 
 ## Example: uniform kernel
-If the kernel is uniform, then $\hat{\mathbb{H}}_{n}(h)$ simplifies to
+If the kernel is uniform, then $\hat{\mathbb{H}}(h)$ simplifies to
 \begin{equation*}
-  \hat{\mathbb{H}}_{m}(h)=\frac{\sum_{i=1}^{\lfloor hT\rfloor}Y_{i,m}}{\sqrt{
+  \hat{\mathbb{H}}(h)=\frac{\sum_{i=1}^{\lfloor hT\rfloor}Y_{i}}{\sqrt{
     \lfloor hT\rfloor}}.
 \end{equation*}
-so that $\hat{\mathbb{H}}_{m}(h)$ is mean-zero Gaussian process with covariance
-function $\E[ \hat{\mathbb{H}}_{m}(h) \hat{\mathbb{H}}_{m}(h')]=\frac{\lfloor
+so that $\hat{\mathbb{H}}(h)$ is mean-zero Gaussian process with covariance
+function $\E[ \hat{\mathbb{H}}(h) \hat{\mathbb{H}}(h')]=\frac{\lfloor
   hT\rfloor\wedge \lfloor h'T\rfloor}{\sqrt{\lfloor hT\rfloor \lfloor h'T\rfloor}}$.
 
 
 ## Note: Alternative approaches
 
 An alternative used in an earlier version of the paper is to replace
-$\hat{\mathbb{H}}_{m}(h)$ with
+$\hat{\mathbb{H}}(h)$ with
 \begin{equation*}
-  \tilde{\mathbb{H}}_{m}(h)=\frac{1/\sqrt{T}
-    \sum_{i=1}^{T}Y_{i,m}k\left(i/hT\right)}{\sqrt{
+  \tilde{\mathbb{H}}(h)=\frac{1/\sqrt{T}
+    \sum_{i=1}^{T}Y_{i}k\left(i/hT\right)}{\sqrt{
       h\int_{0}^{\infty} k(u)^{2}\, \dd u}}
 \end{equation*}
 This method, however, has the disadvantage what for any finite $T$, the variance
-of the process $\tilde{\mathbb{H}}_{m}(h)$ is not equal to one exactly.
+of the process $\tilde{\mathbb{H}}(h)$ is not equal to one exactly.
 
-A third possible approach is to replace $\hat{\mathbb{H}}_{m}(h)$ with
+A third possible approach is to replace $\hat{\mathbb{H}}(h)$ with
 \begin{align*}
-  \hat{\mathbb{H}}_j(h) =\frac{\frac{1}{\sqrt{T}}
-    \sum_{i=1}^{T}Y_{i,j}k(X_i/h)}{\sqrt{\frac{1}{2A}\int k(u/h)^2\, du}}
-  =\frac{\frac{1}{\sqrt{T}} \sum_{i=1}^{T}Y_{i,j}k(X_i/h)}{\sqrt{\frac{h}{2A}\int
+  \hat{\mathbb{H}}(h) =\frac{\frac{1}{\sqrt{T}}
+    \sum_{i=1}^{T}Y_{i}k(X_i/h)}{\sqrt{\frac{1}{2}\int k(u/h)^2\, du}}
+  =\frac{\frac{1}{\sqrt{T}} \sum_{i=1}^{T}Y_{i}k(X_i/h)}{\sqrt{\frac{h}{2}\int
       k(u)^2\, du}},
 \end{align*}
-where $\{(X_{i,j},Y_{i,j})\}_{1\le i\le T,1\le j\le S}$ be i.i.d. with $X_i$
-independent of $Y_i$ and $X_i\sim U[-A,A]$ and $Y_i\sim N(0,1)$.
-Note that $\hat{\mathbb{H}}_j(h)=0$ and
+where $\{(X_{i},Y_{i})\}_{1\le i\le T}$ be i.i.d. with $X_i$
+independent of $Y_i$ and $X_i\sim U[-1,1]$ and $Y_i\sim N(0,1)$.
+Note that $\hat{\mathbb{H}}(h)=0$ and
 \begin{align*}
-  \cov(\hat{\mathbb{H}}_j(h),\hat{\mathbb{H}}_j(h'))
-  &=\frac{EY_{i,j}^2k(X_i/h)k(X_i/h') }{\sqrt{\frac{1}{2A}\int k(u/h)^2\,
-      du}\sqrt{\frac{1}{2A}\int k(u/h')^2\, du}}
+  \cov(\hat{\mathbb{H}}(h),\hat{\mathbb{H}}(h'))
+  &=\frac{EY_{i}^2k(X_i/h)k(X_i/h') }{\sqrt{\frac{1}{2}\int k(u/h)^2\,
+      du}\sqrt{\frac{1}{2}\int k(u/h')^2\, du}}
   \\
-  & =\frac{Ek(X_i/h)k(X_i/h')}{\frac{1}{2A}\sqrt{\int k(u/h)^2\, du}\sqrt{\int
+  & =\frac{Ek(X_i/h)k(X_i/h')}{\frac{1}{2}\sqrt{\int k(u/h)^2\, du}\sqrt{\int
       k(u/h')^2\, du}}
-  =\frac{\frac{1}{2A}\int_{x=-A}^{A} k(x/h)k(x/h')\, dx}{\frac{1}{2A}\sqrt{\int k(u/h)^2\, du}\sqrt{\int k(u/h')^2\, du}}  \\
+  =\frac{\frac{1}{2}\int_{x=-1}^{1} k(x/h)k(x/h')\, dx}{\frac{1}{2}\sqrt{\int k(u/h)^2\, du}\sqrt{\int k(u/h')^2\, du}}  \\
   & =\frac{\int_{x=-\infty}^\infty k(x/h)k(x/h')\, dx}{\sqrt{\int k(u/h)^2\,
       du}\sqrt{\int k(u/h')^2\, du}}
 \end{align*}
 for $h\le 1$ (the last step follows since, for $h\le 1$, the integral is over
-$-Ah\le x\le Ah$ for both the last and second to last line). Thus,
-$\hat{\mathbb{H}}_j(h)$ and $\mathbb{H}(h)$ have the same covariance function
+$-h\le x\le h$ for both the last and second to last line). Thus,
+$\hat{\mathbb{H}}(h)$ and $\mathbb{H}(h)$ have the same covariance function
 and, for large enough $T$, have approximately the same distribution.
 
 # Looking up and computing snooping-adjusted critical values
@@ -140,7 +140,7 @@ reported in the paper:
 ```{r}
 
 ## The function DFSnoopingCV may long time to compute, the package has results
-## stored for [[TODO]] DFSnoopingCV(S=1000, T=1000, grid.length=500) under the data frame
+## stored for DFSnoopingCV(S=60000, T=10000, ngr=1000) under the data frame
 ## snoopingcvs
 
 r <- SnoopingTablesGraphs(snoopingcvs)

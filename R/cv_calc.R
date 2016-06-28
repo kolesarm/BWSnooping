@@ -1,28 +1,27 @@
 #' Snooping-adjusted critical values for bandwidth ratios on a grid.
 #'
 #' Calculate one- and two-sided critical values \eqn{c_{1-\alpha}(t;k)} for
-#' values of \eqn{t} in \code{1/grid} based on evaluating the Gaussian process
-#' \eqn{\hat{\mathbb{H}}(h)} at values of \eqn{h} equal to \code{grid}.
+#' \code{ngr} values of \eqn{t=\overline{h}/\underline{h}} in between 1 and 100
+#' based on evaluating the Gaussian process \eqn{\hat{\mathbb{H}}(h)} at the
+#' same values.
 #' @param S number of draws of the Gaussian process \eqn{\hat{\mathbb{H}}(h)}
 #' @param T number of draws from a normal distribution in each draw of the
 #'     Gaussian process
-#' @param grid a vector of values inside the unit interval specifying values of
-#'     \eqn{h} at which to evaluate the Gaussian process.
+#' @param ngr number of grid points on which to evaluate the Gaussian process
+#'     \eqn{\hat{\mathbb{H}}(s)}.
 #' @param kernel Kernel function \eqn{k(u)} supported on [-1,1] that takes a
 #'     vector or a matrix as an argument \eqn{u}.
 #' @param alpha A vector of values determining the confidence level
 #'     \eqn{1-\alpha} at which to compute critical values
 #' @keywords internal
-GridSnoopingCV <- function(S, T, grid, kernel, alpha=c(0.1, 0.05, 0.01)) {
-
+GridSnoopingCV <- function(S, T, ngr, kernel, alpha=c(0.1, 0.05, 0.01)) {
     set.seed(7)
-    ngr <- length(grid)                # number of grid points
-    ts <- sort(1/grid)
+    ## 1<h<\overline{h}/\underline{h}
+    ts <- 1 / exp(seq(log(1), log(0.01), length.out=ngr))
 
-    ## compute sup.H[m, s]=sup_{s<h<hmax}{Hhat_{m}(h)} and
-    ## sup_{s<h<hmax}{|Hhat_{m}(h)|}, where hmax=max(grid) for all s in grid
+    ## sup.H[m, s]=sup_{s<h<1}{Hhat_{m}(h)}
     sup.H <- sup.absH <- matrix(nrow=S, ncol=ngr)
-    ku <- kernel(outer((1:T)/T, ts)) # k[i, h]=k(i/Th)
+    ku <- kernel(outer((1:T)/T, ts)) # k[i, h]=k(i/Th),
 
     for (m in 1:S) {
         ## In case all k(i/hT) evaluate to zero, set sum to 1e-10
@@ -31,17 +30,24 @@ GridSnoopingCV <- function(S, T, grid, kernel, alpha=c(0.1, 0.05, 0.01)) {
         sup.H[m, ] <- cummax(Hhat)
         sup.absH[m, ] <- cummax(abs(Hhat))
     }
+    dfcv(ts, sup.H, sup.absH, alpha)
+}
+
+
+#' make data frame of critical values sup.H and sup.absH
+#' @keywords internal
+dfcv <- function(ts, sup.H, sup.absH, alpha) {
     onesided <- apply(sup.H, 2, function(u) stats::quantile(u, 1-alpha))
     twosided <- apply(sup.absH, 2, function(u) stats::quantile(u, 1-alpha))
 
-    ## Compute coverage when using unadjusted critical values
+    ## Coverage when using unadjusted critical values
     c.onesided <- sapply(stats::qnorm(1-alpha),
                          function(c) colMeans(sup.H < c))
     c.twosided <- sapply(stats::qnorm(1-alpha/2),
                          function(c) colMeans(sup.absH < c))
 
     data.frame(t=rep(ts, times=length(alpha)),
-               level=rep(1-alpha, each=ngr),
+               level=rep(1-alpha, each=length(ts)),
                onesided=as.vector(t(onesided)),
                twosided=as.vector(t(twosided)),
                ua.onesided=as.vector(c.onesided),
@@ -55,17 +61,13 @@ GridSnoopingCV <- function(S, T, grid, kernel, alpha=c(0.1, 0.05, 0.01)) {
 #' triangular, and epanechnikov kernels and local constant, linear, and
 #' quadratic regression in the interior and on the boundary. Also calculates
 #' coverage of confidence intervals without snooping adjustment.
-#' @param grid.length length of grid on which to evaluate the Gaussian process
-#'     \eqn{\hat{\mathbb{H}}(h)}. Critical values are computed for ratios of
-#'     maximum to minumum bandwidth equal to each value in the grid.
 #' @inheritParams GridSnoopingCV
 #' @return data frame in the same format as the \code{\link{snoopingcvs}} data
 #'     frame, which was generated using this funcion.
 #' @export
-DFSnoopingCV <- function(S, T, grid.length) {
+DFSnoopingCV <- function(S, T, ngr) {
 
     ## make a decreasing log grid for h values
-    grid <- exp(seq(log(1), log(0.01), length.out=grid.length))
     d <- expand.grid(kernel=c("uniform", "triangular", "epanechnikov"),
                      boundary=c(TRUE, FALSE),
                      order=0:2, stringsAsFactors = FALSE)
@@ -76,7 +78,7 @@ DFSnoopingCV <- function(S, T, grid.length) {
                     boundary=d$boundary[j], order=d$order[j])
         cvs <- rbind(cvs, data.frame(kernel=d$kernel[j], boundary=d$boundary[j],
                                      order=d$order[j],
-                                     GridSnoopingCV(S, T, grid, k)))
+                                     GridSnoopingCV(S, T, ngr, k)))
     }
 
     cvs

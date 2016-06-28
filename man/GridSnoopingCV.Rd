@@ -4,7 +4,7 @@
 \alias{GridSnoopingCV}
 \title{Snooping-adjusted critical values for bandwidth ratios on a grid.}
 \usage{
-GridSnoopingCV(S, T, grid, kernel, alpha = c(0.1, 0.05, 0.01))
+GridSnoopingCV(S, T, ngr, kernel, alpha = c(0.1, 0.05, 0.01))
 }
 \arguments{
 \item{S}{number of draws of the Gaussian process \eqn{\hat{\mathbb{H}}(h)}}
@@ -12,8 +12,8 @@ GridSnoopingCV(S, T, grid, kernel, alpha = c(0.1, 0.05, 0.01))
 \item{T}{number of draws from a normal distribution in each draw of the
 Gaussian process}
 
-\item{grid}{a vector of values inside the unit interval specifying values of
-\eqn{h} at which to evaluate the Gaussian process.}
+\item{ngr}{number of grid points on which to evaluate the Gaussian process
+\eqn{\hat{\mathbb{H}}(s)}.}
 
 \item{kernel}{Kernel function \eqn{k(u)} supported on [-1,1] that takes a
 vector or a matrix as an argument \eqn{u}.}
@@ -23,8 +23,9 @@ vector or a matrix as an argument \eqn{u}.}
 }
 \description{
 Calculate one- and two-sided critical values \eqn{c_{1-\alpha}(t;k)} for
-values of \eqn{t} in \code{1/grid} based on evaluating the Gaussian process
-\eqn{\hat{\mathbb{H}}(h)} at values of \eqn{h} equal to \code{grid}.
+\code{ngr} values of \eqn{t=\overline{h}/\underline{h}} in between 1 and 100
+based on evaluating the Gaussian process \eqn{\hat{\mathbb{H}}(h)} at the
+same values.
 }
 \keyword{internal}
 

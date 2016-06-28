@@ -4,7 +4,7 @@
 \alias{DFSnoopingCV}
 \title{Data frame of snooping-adjusted critical values for common kernels}
 \usage{
-DFSnoopingCV(S, T, grid.length)
+DFSnoopingCV(S, T, ngr)
 }
 \arguments{
 \item{S}{number of draws of the Gaussian process \eqn{\hat{\mathbb{H}}(h)}}
@@ -12,9 +12,8 @@ DFSnoopingCV(S, T, grid.length)
 \item{T}{number of draws from a normal distribution in each draw of the
 Gaussian process}
 
-\item{grid.length}{length of grid on which to evaluate the Gaussian process
-\eqn{\hat{\mathbb{H}}(h)}. Critical values are computed for ratios of
-maximum to minumum bandwidth equal to each value in the grid.}
+\item{ngr}{number of grid points on which to evaluate the Gaussian process
+\eqn{\hat{\mathbb{H}}(s)}.}
 }
 \value{
 data frame in the same format as the \code{\link{snoopingcvs}} data

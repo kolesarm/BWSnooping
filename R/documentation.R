@@ -16,6 +16,6 @@
 #'   \item{ua.onesided}{Coverage of unadjusted two-sided CIs}
 #' }
 #'
-#' @source Computed by running [[TODO: final code]]
-#' \code{snoopingcvs <- DFSnoopingCV(S=1000, T=100, 500)}
+#' @source Computed by running
+#' \code{snoopingcvs <- DFSnoopingCV(S=60000, T=10000, 1000)}
 "snoopingcvs"
