@@ -170,12 +170,12 @@ SnoopingCV <- function(bwratio, kernel, boundary, order, onesided=FALSE,
 
     sub <- data.frame()
     if (is.character(kernel)) {
-        sub <- snoopingcvs[snoopingcvs$t>=bwratio &
-                           snoopingcvs$t<=(bwratio+0.1) &
-                           snoopingcvs$level==(1-alpha) &
-                           snoopingcvs$boundary==boundary &
-                           snoopingcvs$kernel==kernel &
-                           snoopingcvs$order==order, ]
+        sub <- BWSnooping::snoopingcvs[BWSnooping::snoopingcvs$t>=bwratio &
+                           BWSnooping::snoopingcvs$t<=(bwratio+0.1) &
+                           BWSnooping::snoopingcvs$level==(1-alpha) &
+                           BWSnooping::snoopingcvs$boundary==boundary &
+                           BWSnooping::snoopingcvs$kernel==kernel &
+                           BWSnooping::snoopingcvs$order==order, ]
     }
 
     if (nrow(sub)>=1) {
