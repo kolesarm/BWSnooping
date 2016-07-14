@@ -8,7 +8,7 @@
 #' @param T number of draws from a normal distribution in each draw of the
 #'     Gaussian process
 #' @param ngr number of grid points on which to evaluate the Gaussian process
-#'     \eqn{\hat{\mathbb{H}}(s)}.
+#'     \eqn{\hat{\mathbb{H}}(s)}, or else a vector of grid points
 #' @param kernel Kernel function \eqn{k(u)} supported on [-1,1] that takes a
 #'     vector or a matrix as an argument \eqn{u}.
 #' @param alpha A vector of values determining the confidence level
@@ -17,7 +17,13 @@
 GridSnoopingCV <- function(S, T, ngr, kernel, alpha=c(0.1, 0.05, 0.01)) {
     set.seed(7)
     ## 1<h<\overline{h}/\underline{h}
-    ts <- 1 / exp(seq(log(1), log(0.01), length.out=ngr))
+    if (length(ngr)==1) {
+        ts <- 1 / exp(seq(log(1), log(0.01), length.out=ngr))
+    } else {
+        ts <- 1 / ngr
+        ngr <- length(ngr)
+    }
+
 
     ## sup.H[m, s]=sup_{s<h<1}{Hhat_{m}(h)}
     sup.H <- sup.absH <- matrix(nrow=S, ncol=ngr)
@@ -166,12 +172,12 @@ SnoopingTablesGraphs <- function(cvs, maxratio=10,
 #' @return critical value
 #' @export
 SnoopingCV <- function(bwratio, kernel, boundary, order, onesided=FALSE,
-                       coverage=FALSE, alpha=0.95, S=10000, T=1000) {
+                       coverage=FALSE, alpha=0.05, S=10000, T=1000) {
 
     sub <- data.frame()
     if (is.character(kernel)) {
         sub <- BWSnooping::snoopingcvs[BWSnooping::snoopingcvs$t>=bwratio &
-                           BWSnooping::snoopingcvs$t<=(bwratio+0.1) &
+                           BWSnooping::snoopingcvs$t<=(1.01*bwratio) &
                            BWSnooping::snoopingcvs$level==(1-alpha) &
                            BWSnooping::snoopingcvs$boundary==boundary &
                            BWSnooping::snoopingcvs$kernel==kernel &
@@ -187,8 +193,7 @@ SnoopingCV <- function(bwratio, kernel, boundary, order, onesided=FALSE,
 
         message("Computing critical value by Monte Carlo simulation")
         grid <- exp(seq(log(1), log(1/bwratio), length.out=100))
-        sub <- GridSnoopingCV(S=S, T=T, grid, kernel,
-                              alpha=alpha)[length(grid), ]
+        sub <- GridSnoopingCV(S=S, T=T, grid, kernel, alpha=alpha)[100, ]
     }
 
     if(coverage & onesided) {

@@ -1,6 +1,6 @@
 Package: BWSnooping
 Title: Confidence invervals robust to bandwidth snooping
-Version: 0.0.0.9001
+Version: 0.0.0.9002
 Authors@R: person("Michal", "Kolesar",
     email = "kolesarmi@googlemail.com", role = c("aut", "cre"))
 Description: The package provides critical values for constructing confidence
@@ -18,7 +18,8 @@ Suggests:
     knitr,
     rmarkdown,
     directlabels,
-    reshape2
+    reshape2,
+    testthat
 URL: https://github.com/kolesarm/BWSnooping
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
