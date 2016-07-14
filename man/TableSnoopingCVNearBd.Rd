@@ -14,7 +14,7 @@ TableSnoopingCVNearBd(S, T, ngr, bwratios, db, kernel = "triangular",
 Gaussian process}
 
 \item{ngr}{number of grid points on which to evaluate the Gaussian process
-\eqn{\hat{\mathbb{H}}(s)}.}
+\eqn{\hat{\mathbb{H}}(s)}, or else a vector of grid points}
 
 \item{bwratios}{Bandwidth ratios of maximum to minimum bandwidth for which to
 compute critical values}

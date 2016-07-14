@@ -13,7 +13,7 @@ DFSnoopingCV(S, T, ngr)
 Gaussian process}
 
 \item{ngr}{number of grid points on which to evaluate the Gaussian process
-\eqn{\hat{\mathbb{H}}(s)}.}
+\eqn{\hat{\mathbb{H}}(s)}, or else a vector of grid points}
 }
 \value{
 data frame in the same format as the \code{\link{snoopingcvs}} data

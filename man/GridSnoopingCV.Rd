@@ -13,7 +13,7 @@ GridSnoopingCV(S, T, ngr, kernel, alpha = c(0.1, 0.05, 0.01))
 Gaussian process}
 
 \item{ngr}{number of grid points on which to evaluate the Gaussian process
-\eqn{\hat{\mathbb{H}}(s)}.}
+\eqn{\hat{\mathbb{H}}(s)}, or else a vector of grid points}
 
 \item{kernel}{Kernel function \eqn{k(u)} supported on [-1,1] that takes a
 vector or a matrix as an argument \eqn{u}.}

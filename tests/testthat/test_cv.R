@@ -8,5 +8,5 @@ test_that("Sanity check for SnoopingCV", {
         SnoopingCV(10, "uniform", TRUE, 2)
 
     expect_true(diff1 > 0 & diff1<0.02)
-    expect_true(diff2 < 0 & diff2>-0.02)
+    expect_true(diff2 < 0 & diff2> -0.2)
 })

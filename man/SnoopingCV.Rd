@@ -5,7 +5,7 @@
 \title{Snooping-adjusted critical value}
 \usage{
 SnoopingCV(bwratio, kernel, boundary, order, onesided = FALSE,
-  coverage = FALSE, alpha = 0.95, S = 10000, T = 1000)
+  coverage = FALSE, alpha = 0.05, S = 10000, T = 1000)
 }
 \arguments{
 \item{bwratio}{ratio of maximum to minimum bandwidth, number greater than 1}
