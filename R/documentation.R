@@ -113,3 +113,25 @@
 #' Other variables: \describe{\item{das2d3pc}{Duke Activity Status Index (DASI)
 #' 2 weeks prior ## "rhc"}}
 "rhc"
+
+#' National Supported Work (NWS) Demonstration data
+#'
+#' Dataset from Dehejia and Wahba (1999).
+#' @source Rajeev Dehejia's website,
+#'     \url{http://users.nber.org/~rdehejia/nswdata2.html}
+#' @format Data frame with 2,675 observations on 12 variables:
+#' \describe{
+#' \item{treatment}{treatment indicator}
+#' \item{age}{Age in years}
+#' \item{education}{Years of schooling}
+#' \item{black}{}
+#' \item{hispanic}{}
+#' \item{married}{}
+#' \item{nodegree}{No high school degree}
+#' \item{re74}{Earnings in 1974}
+#' \item{re75}{Earnings in 1975}
+#' \item{re78}{Earnings in 1978}
+#' \item{ue74}{Unemployed (i.e. zero earnings) in 1974}
+#' \item{ue74}{Unemployed (i.e. zero earnings) in 1974}
+#' }
+"nsw"
