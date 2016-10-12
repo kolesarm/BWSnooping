@@ -4,10 +4,25 @@
 \alias{TableSnoopingCVNearBd}
 \title{Table of snooping-adjusted critical values for estimation near a boundary}
 \usage{
-TableSnoopingCVNearBd(S, T, ngr, bwratios, db, kernel = "triangular",
-  order = 1, alpha = 0.05)
+TableSnoopingCVNearBd(bwratios, kernel = "triangular", db, order = 1,
+  alpha = 0.05, S = 10000, T = 1000, ngr = 100)
 }
 \arguments{
+\item{bwratios}{Bandwidth ratios of maximum to minimum bandwidth for which to
+compute critical values}
+
+\item{kernel}{Either one of \code{"uniform"}, \code{"triangular"}, or
+\code{"epanechnikov"}, or else an (original) kernel function. Function
+computes appropriate equivalent kernel function}
+
+\item{db}{Local distance to boundary, equal to \eqn{x_{0}/\underline{h}},
+where \eqn{x_{0}} is point of interest.}
+
+\item{order}{order of local polynomial}
+
+\item{alpha}{Determines confidence level \eqn{1-\alpha} at which to compute
+critical values}
+
 \item{S}{number of draws of the Gaussian process \eqn{\hat{\mathbb{H}}(h)}}
 
 \item{T}{number of draws from a normal distribution in each draw of the
@@ -15,21 +30,6 @@ Gaussian process}
 
 \item{ngr}{number of grid points on which to evaluate the Gaussian process
 \eqn{\hat{\mathbb{H}}(s)}, or else a vector of grid points}
-
-\item{bwratios}{Bandwidth ratios of maximum to minimum bandwidth for which to
-compute critical values}
-
-\item{db}{Local distance to boundary, equal to \eqn{x_{0}/\underline{h}},
-where \eqn{x_{0}} is point of interest.}
-
-\item{kernel}{Either one of \code{"uniform"}, \code{"triangular"}, or
-\code{"epanechnikov"}, or else an (original) kernel function. Function
-computes appropriate equivalent kernel function}
-
-\item{order}{order of local polynomial}
-
-\item{alpha}{Determines confidence level \eqn{1-\alpha} at which to compute
-critical values}
 }
 \value{
 A table of snooping-adjusted critical values

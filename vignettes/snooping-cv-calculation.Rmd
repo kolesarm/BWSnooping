@@ -23,10 +23,34 @@ knitr::opts_chunk$set(tidy = TRUE, collapse=TRUE, comment = "#>",
 ```
 
 
+
+# Looking up and computing snooping-adjusted critical values
+
+The function `SnoopingCV` looks up appropriate critical values adjusted for
+bandwidth snooping, as described in @ArKo16snooping from a table of pre-computed
+critical values. If, for a given kernel and order of a local polynomial no
+critical value is found, the function computes an appropriate critical value
+using Monte Carlo simulation as explained in the next section.
+
+```{r, echo=TRUE}
+library("BWSnooping")
+SnoopingCV(bwratio=6.2, kernel="triangular", boundary=TRUE, order=1, alpha=0.01)
+```
+
+This gives appropriate 99% critical value for a regression discontinuity design
+using a triangular kernel and local linear regression, with ratio of maximum to
+minimum bandwidths equal to 6.2. The following call gives the critical value for
+Nadarya-Watson (local constant) regression. Since values of `bwratio` greater
+than 100 are not pre-computed, it will be computed by simulation:
+
+```{r, echo=TRUE}
+SnoopingCV(bwratio=102, kernel="triangular", boundary=FALSE, order=0, alpha=0.05)
+```
+
 # Calculation of critical values
 
 This section describes the method used to tabulate the critical values based on
-Corollary 3.1 in @ArKo15snooping.
+Theorem 3.1 in @ArKo16snooping.
 
 Let $k$ be a kernel (i.e.\ a non-negative function symmetric around zero that
 integrates to one) with bounded support normalized to $[-1,1]$. We want to
@@ -122,13 +146,34 @@ $-h\le x\le h$ for both the last and second to last line). Thus,
 $\hat{\mathbb{H}}(h)$ and $\mathbb{H}(h)$ have the same covariance function
 and, for large enough $T$, have approximately the same distribution.
 
-# Looking up and computing snooping-adjusted critical values
+# Regression near a boundary point
 
-```{r}
-library("BWSnooping")
+Since the critical values at a boundary and interior points differ, this may
+create a non-uniformity issue for estimation problems in which the point of
+interest lies near a boundary point. To deal with this case, it is possible to
+extend the method in @ArKo16snooping by modeling the point of interest as being
+local to boundary, as in Chapter 3.2.5 of @FaGi96 (see Section S2.1 in the
+supplement to @ArKo16snooping).
 
-## [[TODO]]
+In particular, for local polynomial estimation of $E[Y_{i}\mid X_{i}=x_{0}]$
+  where $x_{0}=c\underline{h}_{n}$ and the lower support point of the density of
+  $X_{i}$ is zero, the appropriate critical value can be computed using the
+  function `TableSnoopingCVNearBd`. For convenience, the function reports a
+  table of critical values. For example, to calculate critical values for local
+  linear regression and bandwidth ratios $\overline{h}/\underline{h}$ equal to
+  $t\in\{1, 2, 3\}$ and the local parameter equal to $c\in\{1,2,10\}$, one calls
+
+```{r, results="asis"}
+nb <- TableSnoopingCVNearBd(bwratios=c(1, 2, 3), kernel="triangular", db=c(1, 2, 10), order=1)
+
+knitr::kable(nb$table.twosided, row.names=FALSE, digits=2,
+    caption="Local linear regression near a boundary")
+knitr::kable(nb$table.onesided, row.names=FALSE, digits=2,
+    caption="Local linear regression near a boundary")
 ```
+
+
+
 
 # Tables and graphs of critical values
 
@@ -140,8 +185,8 @@ reported in the paper:
 ```{r}
 
 ## The function DFSnoopingCV may long time to compute, the package has results
-## stored for DFSnoopingCV(S=60000, T=10000, ngr=1000) under the data frame
-## snoopingcvs
+## stored for DFSnoopingCV(S=60000, T=10000, ngr=1000)
+## under the data frame snoopingcvs
 
 r <- SnoopingTablesGraphs(snoopingcvs)
 ```
@@ -234,6 +279,19 @@ boundary:
 r$cov.boundary
 ```
 
+# Critical values based on extreme value approximation
 
+The package also provides a function `EVSnoopingCV` that calculates critical
+values based on a further extreme value approximation to the Gaussian process.
+Its use is not recommended, however. The following figure compares these
+critical values with those based directly on the Gaussian process.
+
+Order "0" corresponds to Nadaraya-Watson or local linear regression in the
+interior, and order "1" to local linear regression at a boundary.
+
+```{r  message=FALSE, dev="tikz", out.width="0.7\\textwidth"}
+p <- PlotEVSnoopingCV()
+p+ggplot2::ylab("Critical value")+ggplot2::xlab("$\\overline{h}/\\underline{h}$")
+```
 
 # References

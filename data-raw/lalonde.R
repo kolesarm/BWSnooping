@@ -6,10 +6,13 @@
 tr <- read.table("http://users.nber.org/~rdehejia/data/nswre74_treated.txt",
                  header=FALSE)
 ## Non-experimental comparison groups constructed by Lalonde from the PSID
-co <- read.table("http://users.nber.org/~rdehejia/data/psid_controls.txt",
-                 header=FALSE)
+psid <- read.table("http://users.nber.org/~rdehejia/data/psid_controls.txt",
+                   header=FALSE)
+## CPS
+cps <- read.table("http://users.nber.org/~rdehejia/data/cps_controls.txt",
+                  header=FALSE)
 
-nsw <- rbind(tr, co)
+nsw <- rbind(tr, psid)
 names(nsw) <- c("treatment", "age", "education", "black", "hispanic", "married",
                "nodegree", "re74", "re75", "re78")
 ## Construct unemployment variables

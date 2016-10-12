@@ -13,7 +13,7 @@ SnoopingCVNearBd(S, T, bwratios, kernel, order, db, ngr, alpha = c(0.1, 0.05,
 \item{T}{number of draws from a normal distribution in each draw of the
 Gaussian process}
 
-\item{bwratios}{Bandwidth ratios of maximum to minimum bandwidth for whcih to
+\item{bwratios}{Bandwidth ratios of maximum to minimum bandwidth for which to
 compute critical values}
 
 \item{kernel}{Kernel function \eqn{k(u)} supported on [-1,1] that takes a

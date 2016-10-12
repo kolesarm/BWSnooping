@@ -8,7 +8,7 @@
 #' @param db Local distance to boundary, equal to \eqn{x_{0}/\underline{h}},
 #'     where \eqn{x_{0}} is point of interest.
 #' @param ngr number of grid points at which to evaluate the Gaussian process
-#' @param bwratios Bandwidth ratios of maximum to minimum bandwidth for whcih to
+#' @param bwratios Bandwidth ratios of maximum to minimum bandwidth for which to
 #'     compute critical values
 #' @inheritParams GridSnoopingCV
 #' @keywords internal
@@ -70,8 +70,8 @@ SnoopingCVNearBd <- function(S, T, bwratios, kernel, order, db, ngr,
 #' @inheritParams GridSnoopingCV
 #' @return A table of snooping-adjusted critical values
 #' @export
-TableSnoopingCVNearBd <- function(S, T, ngr, bwratios, db, kernel="triangular",
-                                  order=1, alpha=0.05) {
+TableSnoopingCVNearBd <- function(bwratios, kernel="triangular", db, order=1,
+                                  alpha=0.05, S=10000, T=1000, ngr=100) {
     df <- data.frame()
     for (dist in db) {
         r <- SnoopingCVNearBd(S, T, bwratios, kernel, order, dist, ngr, alpha)

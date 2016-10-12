@@ -1,6 +1,11 @@
 #' Definitions of equivalent kernels, same as in RDHonest package
 #' @keywords internal
 EqKern <- function(kernel = "uniform", boundary = TRUE, order = 0) {
+
+    if(!(kernel %in% c("uniform", "triangular", "epanechnikov")))
+        warning("I don't know how to compute qquivalent '",
+                kernel, "' kernel.")
+
     ## support
     su <- function(u) (u <= 1) * (u >= -1 + boundary)
     if (order == 0 && boundary == TRUE) {
