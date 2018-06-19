@@ -10,4 +10,3 @@ EqKern(kernel = "uniform", boundary = TRUE, order = 0)
 Definitions of equivalent kernels, same as in RDHonest package
 }
 \keyword{internal}
-

@@ -52,4 +52,3 @@ SnoopingCV(110, "triangular", boundary=TRUE, order=1, alpha=0.01)
 ## Equivalently, specify equivalent kernel explicitly
 SnoopingCV(110, function(u) 6*(1 - 2*u) * (1 - u) * (u<=1), alpha=0.01)
 }
-

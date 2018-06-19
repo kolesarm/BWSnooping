@@ -29,4 +29,3 @@ function \code{\link{DFSnoopingCV}}. The data frame is used by
 \code{\link{SnoopingCV}} to look up the appropriate critical value
 }
 \keyword{datasets}
-

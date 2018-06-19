@@ -40,4 +40,3 @@ bandwidth diverges to infinity. Not recommended to use in practice (the
 critical values provided by \code{\link{SnoopingCV}} are more accurate), only
 for illustration.
 }
-

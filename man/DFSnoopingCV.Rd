@@ -25,4 +25,3 @@ triangular, and epanechnikov kernels and local constant, linear, and
 quadratic regression in the interior and on the boundary. Also calculates
 coverage of confidence intervals without snooping adjustment.
 }
-

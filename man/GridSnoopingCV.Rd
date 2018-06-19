@@ -28,4 +28,3 @@ based on evaluating the Gaussian process \eqn{\hat{\mathbb{H}}(h)} at the
 same values.
 }
 \keyword{internal}
-

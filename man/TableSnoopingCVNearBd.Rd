@@ -38,4 +38,3 @@ A table of snooping-adjusted critical values
 Generate a table of two-sided snooping-adjusted critical values for a given kernel in a
 local polynomial regression near a boudnary point
 }
-

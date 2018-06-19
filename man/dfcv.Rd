@@ -10,4 +10,3 @@ dfcv(ts, sup.H, sup.absH, alpha)
 make data frame of critical values sup.H and sup.absH
 }
 \keyword{internal}
-

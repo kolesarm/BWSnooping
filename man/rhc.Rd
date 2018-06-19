@@ -99,4 +99,3 @@ Dataset from Connors et al. (1996). This version labels and modifies the
 variables so that they match those in Hirano and Imbens' analysis.
 }
 \keyword{datasets}
-

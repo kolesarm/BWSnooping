@@ -10,4 +10,3 @@ baseplot(data, ylab, xlim = NULL, method = NULL)
 Plotting critical values
 }
 \keyword{internal}
-

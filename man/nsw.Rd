@@ -30,4 +30,3 @@ nsw
 Dataset from Dehejia and Wahba (1999).
 }
 \keyword{datasets}
-

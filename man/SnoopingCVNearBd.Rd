@@ -36,4 +36,3 @@ values of \eqn{t} in \code{bwratios} based on evaluating the Gaussian process
 \eqn{[1/t,1]}.
 }
 \keyword{internal}
-

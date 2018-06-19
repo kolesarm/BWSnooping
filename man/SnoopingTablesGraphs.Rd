@@ -23,4 +23,3 @@ A list with two components: a list of tables and a list of figures
 Generate tables of snooping-adjusted critical values as well as ggplot2
 objects that plot them
 }
-

@@ -12,4 +12,3 @@ figure comparing critical values
 \description{
 Compare critical values based on Gaussian and extreme value approximation
 }
-
