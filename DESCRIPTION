@@ -1,6 +1,6 @@
 Package: BWSnooping
 Title: Confidence invervals robust to bandwidth snooping
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: person("Michal", "Kolesar",
     email = "kolesarmi@googlemail.com", role = c("aut", "cre"))
 Description: The package provides critical values for constructing confidence

@@ -3,7 +3,7 @@
 EqKern <- function(kernel = "uniform", boundary = TRUE, order = 0) {
 
     if(!(kernel %in% c("uniform", "triangular", "epanechnikov")))
-        warning("I don't know how to compute qquivalent '",
+        warning("I don't know how to compute equivalent '",
                 kernel, "' kernel.")
 
     ## support
